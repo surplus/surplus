@@ -8,6 +8,9 @@
 //! For more information check https://github.com/surplus.
 #![deny(missing_docs)]
 
+#[cfg(target_arch = "wasm32")]
+mod wasm;
+
 use oxc::{
     allocator as alo,
     ast::{
