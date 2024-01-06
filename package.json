@@ -1,6 +1,6 @@
 {
 	"name": "@surplus/compiler",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Surplus framework compiler WASM module",
 	"author": "Josh Junon (https://github.com/qix-)",
 	"repository": "surplus/compiler",
