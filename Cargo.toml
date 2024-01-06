@@ -27,6 +27,13 @@ categories = [
 	"web-programming"
 ]
 resolver = "2"
+include = [
+	"/src/**/*.rs",
+	"/README.md",
+	"/LICENSE",
+	"/.github/FUNDING.yml",
+	"/Cargo.toml",
+]
 
 [lib]
 path = "src/lib.rs"
