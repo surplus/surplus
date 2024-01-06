@@ -25,18 +25,18 @@ The compiler is usable via a WASM module.
 > will remain synchronized.
 
 ```javascript
-import compileSurplus from '@surplus/compiler';
+import compileSurplus from "@surplus/compiler";
 
 console.log(
-    compileSurplus(
-        `<div>Hello!</div>`,
+	compileSurplus(
+		`<div>Hello!</div>`,
 
-        /* Optional arguments (defaults shown) */
-        {
-            global: '$$S',
-            emitRuntimeImport: true
-        }
-    )
+		/* Optional arguments (defaults shown) */
+		{
+			global: "$$S",
+			emitRuntimeImport: true,
+		},
+	),
 );
 ```
 

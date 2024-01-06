@@ -2,6 +2,10 @@
 	"name": "@surplus/compiler",
 	"version": "0.1.0",
 	"description": "Surplus framework compiler WASM module",
+	"author": "Josh Junon (https://github.com/qix-)",
+	"repository": "surplus/compiler",
+	"license": "MIT",
+	"funding": "https://github.com/surplus/compiler?sponsor=1",
 	"main": "node.cjs",
 	"browser": "browser.mjs",
 	"types": "index.d.ts",
@@ -24,9 +28,16 @@
 		"jsx",
 		"reactive"
 	],
-	"author": "Josh Junon (https://github.com/qix-)",
-	"license": "MIT",
 	"devDependencies": {
 		"wasm-pack": "0.12.1"
-	}
+	},
+	"engines": {
+		"node": ">=14.0.0"
+	},
+	"browserslist": [
+		"Chrome >= 57",
+		"Firefox >= 52",
+		"Safari >= 11",
+		"Edge >= 16"
+	]
 }
