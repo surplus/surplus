@@ -10,6 +10,9 @@
 	"browser": "browser.mjs",
 	"types": "index.d.ts",
 	"files": [
+		"pkg/",
+		"pkg/*",
+		"pkg/**",
 		"pkg/**/*",
 		"node.cjs",
 		"browser.mjs",
