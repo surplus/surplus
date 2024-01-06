@@ -13,9 +13,7 @@ keywords = [
 	"javascript",
 	"framework",
 	"compiler",
-	"reactive",
-	"jsx",
-	"oxc"
+	"jsx"
 ]
 categories = [
 	"command-line-utilities",
