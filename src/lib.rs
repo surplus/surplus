@@ -63,6 +63,38 @@ struct SurplusVisitorMut<'a> {
     a: AstBuilder<'a>,
 }
 
+/// Trims all whitespace from a string, with a few rules.
+/// Must return a `String` instead of a sub-slice since
+/// a single whitespace character is synthesized in some
+/// cases.
+///
+/// 1. For the first element (index 0), trim leading whitespace.
+/// 2. For the last element (index `total_elements - 1`), trim trailing whitespace.
+/// 3. For any remaining case (leading/trailing whitespace for each element),
+///    if there is at least one whitespace character (including newlines),
+///    first trim all whitespace, then add a single space.
+/// 4. If the trimmed string is empty, return at most a single whitespace.
+fn trim_whitespace(s: &str, index: usize, total_elements: usize) -> String {
+    let trimmed = s.trim();
+
+    if trimmed.is_empty() && !s.is_empty() {
+        return " ".to_string();
+    }
+
+    let mut start = "";
+    let mut end = "";
+
+    if index != 0 && s.chars().next().unwrap_or_default().is_whitespace() {
+        start = " ";
+    }
+
+    if (index != total_elements - 1) && s.chars().last().unwrap_or_default().is_whitespace() {
+        end = " ";
+    }
+
+    format!("{}{}{}", start, trimmed, end)
+}
+
 impl<'a> SurplusVisitorMut<'a> {
     fn new(allocator: &'a oxc::allocator::Allocator, options: TransformOptions) -> Self {
         Self {
@@ -161,8 +193,9 @@ impl<'a> SurplusVisitorMut<'a> {
         let children = self.take_ownership(&mut elem.children);
         let mut new_children = self.a.new_vec_with_capacity(children.len());
 
-        for child in children.into_iter() {
-            if let Some(child) = self.transform_jsx_child(child) {
+        let total_children = children.len();
+        for (i, child) in children.into_iter().enumerate() {
+            if let Some(child) = self.transform_jsx_child(child, i, total_children) {
                 new_children.push(child);
             }
         }
@@ -196,9 +229,25 @@ impl<'a> SurplusVisitorMut<'a> {
             .map(|c| c == '-' || c.is_lowercase())
             .unwrap_or(false);
 
+        // Kind of a hack, not sure how to do this better, but it has to be
+        // done here as opposed to down below since we take a mutable reference
+        // to the opening element directly after.
+        //
+        // If you can come up with a cleaner way to do this, please open an
+        // issue or PR!
+        let tag_string = if is_builtin_tag {
+            Some(self.a.literal_string_expression(ast::StringLiteral {
+                span: elem.opening_element.name.span(),
+                value: simple_tag.unwrap().into(),
+            }))
+        } else {
+            None
+        };
+
         let attributes = self.take_ownership(&mut elem.opening_element.attributes);
 
         let mut props = self.a.new_vec_with_capacity(attributes.len() + 1);
+        let mut fns = self.a.new_vec();
 
         if !new_children.is_empty() {
             props.push(ast::ObjectPropertyKind::ObjectProperty(
@@ -294,21 +343,36 @@ impl<'a> SurplusVisitorMut<'a> {
                     };
 
                     if let Some(value) = value {
-                        let prop_def = self.a.object_property(
-                            span,
-                            ast::PropertyKind::Init,
-                            ast::PropertyKey::Identifier(self.a.alloc(ast::IdentifierName {
-                                span: attr.name.span(),
-                                name: target,
-                            })),
-                            value,
-                            None,
-                            false,
-                            false,
-                            false,
-                        );
+                        let target = if target_type == AttrTarget::Event {
+                            format!("on:{target}").into()
+                        } else {
+                            target
+                        };
 
-                        props.push(ast::ObjectPropertyKind::ObjectProperty(prop_def));
+                        // Special handling for the `fn` prop; they're added
+                        // to a separate array and passed as the last argument
+                        // to the `el` function.
+                        if target_type == AttrTarget::Prop && target == "fn" {
+                            fns.push(ast::ArrayExpressionElement::Expression(value));
+                        } else {
+                            let prop_def = self.a.object_property(
+                                span,
+                                ast::PropertyKind::Init,
+                                ast::PropertyKey::Expression(self.a.literal_string_expression(
+                                    ast::StringLiteral {
+                                        span: attr.name.span(),
+                                        value: target,
+                                    },
+                                )),
+                                self.fn_expr(value.span(), value),
+                                None,
+                                false,
+                                false,
+                                false,
+                            );
+
+                            props.push(ast::ObjectPropertyKind::ObjectProperty(prop_def));
+                        }
                     }
                 }
                 ast::JSXAttributeItem::SpreadAttribute(spread) => {
@@ -320,30 +384,55 @@ impl<'a> SurplusVisitorMut<'a> {
             }
         }
 
+        let fns = if fns.is_empty() {
+            None
+        } else {
+            Some(ArgExpr(self.fn_expr(
+                elem.span,
+                self.a.array_expression(elem.span, fns, None),
+            )))
+        };
+
         let object = self
             .a
             .object_expression(elem.opening_element.span, props, None);
 
-        let tag = if is_builtin_tag {
-            self.call_s(
-                elem.span,
-                "el",
-                [ArgExpr(callee), ArgExpr(object)].into_iter(),
-            )
-        } else {
-            self.a.call_expression(
-                elem.span,
-                callee,
-                self.a.new_vec_single(ArgExpr(object)),
-                false,
-                None,
-            )
-        };
+        match (is_builtin_tag, ns) {
+            (true, None) => {
+                let mut args = vec![
+                    ArgExpr(tag_string.unwrap()),
+                    ArgExpr(self.fn_expr(object.span(), object)),
+                ];
+                if let Some(fns) = fns {
+                    args.push(fns);
+                }
+                self.call_s(elem.span, "el", args.into_iter())
+            }
+            (true, Some(ns)) => {
+                let mut args = vec![
+                    ArgExpr(ns),
+                    ArgExpr(tag_string.unwrap()),
+                    ArgExpr(self.fn_expr(object.span(), object)),
+                ];
+                if let Some(fns) = fns {
+                    args.push(fns);
+                }
+                self.call_s(elem.span, "ns", args.into_iter())
+            }
+            (false, _) => {
+                let mut args = self.a.new_vec_single(ArgExpr(object));
 
-        if let Some(ns) = ns {
-            self.call_s(elem.span, "ns", [ArgExpr(ns), ArgExpr(tag)].into_iter())
-        } else {
-            tag
+                if let Some(fns) = fns {
+                    args.push(fns);
+                }
+
+                // Note that we don't support namespaced custom elements.
+                let call = self.fn_expr(
+                    elem.span,
+                    self.a.call_expression(elem.span, callee, args, false, None),
+                );
+                self.call_s(elem.span, "ct", [ArgExpr(call)].into_iter())
+            }
         }
     }
 
@@ -363,6 +452,8 @@ impl<'a> SurplusVisitorMut<'a> {
     fn transform_jsx_child(
         &mut self,
         child: ast::JSXChild<'a>,
+        child_idx: usize,
+        total_children: usize,
     ) -> Option<ast::ArrayExpressionElement<'a>> {
         match child {
             ast::JSXChild::Element(mut el) => Some(ast::ArrayExpressionElement::Expression(
@@ -372,7 +463,8 @@ impl<'a> SurplusVisitorMut<'a> {
                 .transform_jsx_expression(expr.expression)
                 .map(ast::ArrayExpressionElement::Expression),
             ast::JSXChild::Text(text) => {
-                let trimmed = text.value.as_str().trim();
+                let trimmed = trim_whitespace(text.value.as_str(), child_idx, total_children);
+
                 if trimmed.is_empty() {
                     None
                 } else {
@@ -421,15 +513,14 @@ impl<'a> SurplusVisitorMut<'a> {
         let children = self.take_ownership(children);
         let mut new_children = self.a.new_vec_with_capacity(children.len());
 
-        for child in children.into_iter() {
-            if let Some(child) = self.transform_jsx_child(child) {
+        let total_children = children.len();
+        for (i, child) in children.into_iter().enumerate() {
+            if let Some(child) = self.transform_jsx_child(child, i, total_children) {
                 new_children.push(child);
             }
         }
 
-        let child_array_expr = self.a.array_expression(span, new_children, None);
-
-        self.call_s(span, "fr", [ArgExpr(child_array_expr)].into_iter())
+        self.a.array_expression(span, new_children, None)
     }
 
     /// Workaround for the allocator headache in oxc.
