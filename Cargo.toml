@@ -2,6 +2,31 @@
 name = "surplus-compiler"
 version = "0.1.0"
 edition = "2021"
+authors = ["Josh Junon (https://github.com/qix-)"]
+description = "Surplus javascript framework core compiler transform"
+readme = "README.md"
+homepage = "https://github.com/surplus"
+repository = "https://github.com/surplus/compiler"
+license-file = "LICENSE"
+keywords = [
+	"surplus",
+	"javascript",
+	"framework",
+	"compiler",
+	"reactive",
+	"jsx",
+	"oxc"
+]
+categories = [
+	"command-line-utilities",
+	"compilers",
+	"development-tools",
+	"parser-implementations",
+	"template-engine",
+	"wasm",
+	"web-programming"
+]
+resolver = "2"
 
 [lib]
 path = "src/lib.rs"
