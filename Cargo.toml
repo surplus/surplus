@@ -16,11 +16,9 @@ keywords = [
 	"jsx"
 ]
 categories = [
-	"command-line-utilities",
 	"compilers",
 	"development-tools",
 	"parser-implementations",
-	"template-engine",
 	"wasm",
 	"web-programming"
 ]
