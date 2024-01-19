@@ -33,7 +33,7 @@ jobs:
         # does this. If you have a good idea on how to do this cleanly,
         # please submit a PR!
         run: |
-          CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-compiler") | .version'"
+          CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-compiler") | .version')"
           if [ "${CARGO_TOML_VERSION}" != "${GITHUB_REF#refs/tags/compiler/}" ]; then
             echo "Tag version does not match Cargo.toml version"
             exit 1

@@ -40,7 +40,7 @@ runs:
       working-directory: ${{ inputs.package }}
     - name: Check Cargo.toml version against tag
       run: |
-        CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-${{ inputs.package }}") | .version'"
+        CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-${{ inputs.package }}") | .version')"
         if [ "${CARGO_TOML_VERSION}" != "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ]; then
           echo "Tag version does not match Cargo.toml version"
           exit 1
