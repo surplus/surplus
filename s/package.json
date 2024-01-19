@@ -31,9 +31,9 @@
 		"signal",
 		"dependency"
 	],
-	"repository": "surplus/s",
+	"repository": "surplus/surplus",
 	"bugs": {
-		"url": "https://github.com/surplus/s/issues"
+		"url": "https://github.com/surplus/surplus/issues"
 	},
 	"author": "Adam Haile",
 	"license": "MIT",
