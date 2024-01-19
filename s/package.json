@@ -5,7 +5,11 @@
   "main": "dist/S.js",
   "module": "dist/es/S.js",
   "types": "dist/es/S.d.ts",
-  "dependencies": {},
+  "files": [
+	"README.md",
+	"LICENSE",
+	"dist"
+  ]
   "devDependencies": {
     "jasmine": "^3.4.0",
     "rollup": "^1.16.2",
