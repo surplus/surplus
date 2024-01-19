@@ -1,0 +1,24 @@
+{
+	"name": "@surplus/rt",
+	"version": "0.1.2",
+	"description": "Surplus framework runtime library",
+	"author": "Josh Junon (https://github.com/qix-)",
+	"license": "MIT",
+	"repository": "surplus/rt",
+	"funding": "https://github.com/surplus/rt?sponsor=1",
+	"main": "index.mjs",
+	"browser": "index.mjs",
+	"type": "module",
+	"keywords": [
+		"surplus",
+		"framework",
+		"runtime",
+		"library"
+	],
+	"dependencies": {
+		"@surplus/s": "0.5.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
