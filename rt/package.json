@@ -21,7 +21,7 @@
 		"library"
 	],
 	"dependencies": {
-		"@surplus/s": "0.5.0"
+		"@surplus/s": "0.6.0"
 	},
 	"publishConfig": {
 		"access": "public"
