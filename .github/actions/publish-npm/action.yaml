@@ -16,7 +16,7 @@ inputs:
   build:
     description: 'Whether to build the package before publishing'
     required: false
-    default: true
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -68,7 +68,7 @@ runs:
     - run: npm i
       shell: bash
     - run: npm run build
-      if: ${{ inputs.build }}
+      if: inputs.build == 'true'
       working-directory: ${{ inputs.package }}
       shell: bash
     - run: npm publish --access public
