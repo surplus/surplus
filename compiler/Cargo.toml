@@ -6,7 +6,7 @@ authors = ["Josh Junon (https://github.com/qix-)"]
 description = "Surplus javascript framework core compiler transform"
 readme = "README.md"
 homepage = "https://github.com/surplus"
-repository = "https://github.com/surplus/compiler"
+repository = "https://github.com/surplus/surplus"
 license-file = "LICENSE"
 keywords = [
 	"surplus",
