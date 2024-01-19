@@ -1,0 +1,66 @@
+name: Publish to NPM
+description: Publishes a Surplus package to NPM
+inputs:
+  working-directory:
+    description: 'The package\'s working directory'
+    required: true
+  npm-token:
+    description: 'The NPM token to use for publishing'
+    required: true
+  github-token:
+    description: 'The GitHub token to use for waiting for CI'
+    required: true
+  ref:
+    description: '${GITHUB_REF}'
+    required: true
+  package-name:
+    description: 'The name of the package to publish (must match package.json in working-directory)'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - run: sudo apt install -y jq
+    - name: Ensure that tag is a valid semver version string
+      run: |
+        if ! npx -y semver "${GITHUB_REF#refs/tags/}" ; then
+          echo "Tag is not a valid semver version string"
+          exit 1
+        fi
+      env:
+        GITHUB_REF: ${{ inputs.ref }}
+    - name: Check that specified package name matches package.json name
+      run: |
+        if [ "$(jq -r '.name' package.json)" != "${{ inputs.package-name }}" ]; then
+          echo "Specified package name does not match package.json name"
+          exit 1
+        fi
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+    - name: Check package.json version against tag
+      run: |
+        if [ "$(jq -r '.version' package.json)" != "${GITHUB_REF#refs/tags/}" ]; then
+          echo "Tag version does not match package.json version"
+          exit 1
+        fi
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        GITHUB_REF: ${{ inputs.ref }}
+    - name: Make sure tag is newer than latest version published on npm
+      run: |
+        if ! npx -y semver --range ">(npm view ${{ inputs.package-name }} version)" "${GITHUB_REF#refs/tags/}" ; then
+          echo "Tag version is not newer than latest version published on npm; manual publish required"
+          exit 1
+        fi
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        GITHUB_REF: ${{ inputs.ref }}
+    - run: npm i
+    - run: npm run build
+      working-directory: ${{ inputs.working-directory }}
+    - run: npm publish --access public
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.npm-token }}

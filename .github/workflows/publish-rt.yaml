@@ -1,0 +1,28 @@
+on:
+  push:
+    tags:
+      - 'rt/*'
+
+jobs:
+  wait-for-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fountainhead/action-wait-for-check@v1
+        id: wait-for-build
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: push
+          ref: ${{ github.sha }}
+  publish:
+    needs: wait-for-ci
+    runs-on: ubuntu-latest
+    if: steps.wait-for-ci.outputs.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: './.github/actions/publish-npm'
+        with:
+          working-directory: 'rt'
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+          package-name: '@surplus/rt'
