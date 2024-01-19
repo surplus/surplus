@@ -19,8 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: './.github/actions/publish-npm'
         with:
-          working-directory: 's'
+          package: s
           npm-token: ${{ secrets.NPM_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.ref }}
-          package-name: '@surplus/s'
