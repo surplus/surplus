@@ -22,6 +22,10 @@ runs:
   steps:
     - run: sudo apt install -y jq
       shell: bash
+    - run: echo GITHUB_REF=${GITHUB_REF}
+      shell: bash
+      env:
+        GITHUB_REF: ${{ inputs.ref }}
     - name: Ensure that tag is a valid semver version string
       run: |
         if ! npx -y semver "${GITHUB_REF#refs/tags/}" ; then
