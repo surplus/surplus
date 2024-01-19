@@ -21,6 +21,7 @@ runs:
   using: composite
   steps:
     - run: sudo apt install -y jq
+      shell: bash
     - name: Ensure that tag is a valid semver version string
       run: |
         if ! npx -y semver "${GITHUB_REF#refs/tags/}" ; then
@@ -29,6 +30,7 @@ runs:
         fi
       env:
         GITHUB_REF: ${{ inputs.ref }}
+      shell: bash
     - name: Check that specified package name matches package.json name
       run: |
         if [ "$(jq -r '.name' package.json)" != "${{ inputs.package-name }}" ]; then
@@ -58,9 +60,12 @@ runs:
       env:
         GITHUB_REF: ${{ inputs.ref }}
     - run: npm i
+      shell: bash
     - run: npm run build
       working-directory: ${{ inputs.working-directory }}
+      shell: bash
     - run: npm publish --access public
       working-directory: ${{ inputs.working-directory }}
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+      shell: bash
