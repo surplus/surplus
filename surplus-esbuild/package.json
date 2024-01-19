@@ -1,6 +1,6 @@
 {
 	"name": "@surplus/esbuild",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Surplus framework ESBuild plugin",
 	"author": "Josh Junon (https://github.com/qix-)",
 	"license": "MIT",
