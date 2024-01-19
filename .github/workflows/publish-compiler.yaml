@@ -5,7 +5,7 @@ on:
       - 'compiler/*'
 
 jobs:
-  wait-for-ci:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: fountainhead/action-wait-for-check@v1.1.0
@@ -14,11 +14,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           checkName: ready-for-publish
           ref: ${{ github.sha }}
-  publish:
-    needs: wait-for-ci
-    runs-on: ubuntu-latest
-    if: needs.wait-for-ci.outputs.conclusion == 'success'
-    steps:
+      - run: exit 1
+        if: steps.wait-for-build.outputs.conclusion != 'success'
       - uses: actions/checkout@v4
       - uses: './.github/actions/publish-npm'
         with:
