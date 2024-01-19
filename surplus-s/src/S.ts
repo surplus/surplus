@@ -6,7 +6,12 @@ export interface S {
 	<T>(fn: () => T): () => T;
 	<T>(fn: (v: T) => T, seed: T): () => T;
 	on<T>(ev: () => any, fn: () => T): () => T;
-	on<T>(ev: () => any, fn: (v: T) => T, seed: T, onchanges?: boolean): () => T;
+	on<T>(
+		ev: () => any,
+		fn: (v: T) => T,
+		seed: T,
+		onchanges?: boolean
+	): () => T;
 	effect<T>(fn: () => T): void;
 	effect<T>(fn: (v: T) => T, seed: T): void;
 
@@ -168,7 +173,10 @@ S.value = function value<T>(
 				var time = RootClock.time;
 				if (age === time)
 					throw new Error(
-						'conflicting values: ' + update + ' is not the same as ' + current
+						'conflicting values: ' +
+							update +
+							' is not the same as ' +
+							current
 					);
 				age = time;
 				current = update!;
@@ -212,7 +220,9 @@ S.sample = function sample<T>(fn: () => T): T {
 
 S.cleanup = function cleanup(fn: (final: boolean) => void): void {
 	if (Owner === null)
-		console.warn('cleanups created without a root or parent will never be run');
+		console.warn(
+			'cleanups created without a root or parent will never be run'
+		);
 	else if (Owner.cleanups === null) Owner.cleanups = [fn];
 	else Owner.cleanups.push(fn);
 };
@@ -334,7 +344,8 @@ class ComputationNode {
 	current() {
 		if (Listener !== null) {
 			if (this.age === RootClock.time) {
-				if (this.state === RUNNING) throw new Error('circular dependency');
+				if (this.state === RUNNING)
+					throw new Error('circular dependency');
 				else updateNode(this); // checks for state === STALE internally, so don't need to check here
 			}
 			logComputationRead(this);
@@ -476,7 +487,8 @@ function recycleOrClaimNode<T>(
 	var _owner = orphan || Owner === null || Owner === UNOWNED ? null : Owner,
 		recycle =
 			node.source1 === null &&
-			((node.owned === null && node.cleanups === null) || _owner !== null),
+			((node.owned === null && node.cleanups === null) ||
+				_owner !== null),
 		i: number;
 
 	if (recycle) {
@@ -519,7 +531,11 @@ function logRead(from: Log) {
 	var to = Listener!,
 		fromslot: number,
 		toslot =
-			to.source1 === null ? -1 : to.sources === null ? 0 : to.sources.length;
+			to.source1 === null
+				? -1
+				: to.sources === null
+					? 0
+					: to.sources.length;
 
 	if (from.node1 === null) {
 		from.node1 = to;

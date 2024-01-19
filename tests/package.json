@@ -1,0 +1,20 @@
+{
+	"name": "@surplus/tests",
+	"version": "0.0.0",
+	"publish": false,
+	"scripts": {
+		"test": "playwright test",
+		"report": "playwright show-report",
+		"install-playwright": "playwright install"
+	},
+	"dependencies": {
+		"@surplus/compiler": "../surplus-compiler",
+		"@surplus/rt": "../surplus-rt",
+		"@surplus/s": "../surplus-s",
+		"@surplus/esbuild": "../surplus-esbuild"
+	},
+	"devDependencies": {
+		"@playwright/test": "1.39.0",
+		"esbuild": "0.19.11"
+	}
+}

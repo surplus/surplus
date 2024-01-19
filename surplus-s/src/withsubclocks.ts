@@ -6,7 +6,12 @@ export interface S {
 	<T>(fn: () => T): () => T;
 	<T>(fn: (v: T) => T, seed: T): () => T;
 	on<T>(ev: () => any, fn: () => T): () => T;
-	on<T>(ev: () => any, fn: (v: T) => T, seed: T, onchanges?: boolean): () => T;
+	on<T>(
+		ev: () => any,
+		fn: (v: T) => T,
+		seed: T,
+		onchanges?: boolean
+	): () => T;
 
 	// Data signal constructors
 	data<T>(value: T): DataSignal<T>;
@@ -76,14 +81,16 @@ const S = <S>function S<T>(fn: (v: T) => T, value: T): () => T {
 				}
 
 				if (node.age === node.clock.time()) {
-					if (node.state === RUNNING) throw new Error('circular dependency');
+					if (node.state === RUNNING)
+						throw new Error('circular dependency');
 					else updateNode(node); // checks for state === STALE internally, so don't need to check here
 				}
 
 				if (node.preclocks !== null) {
 					for (var i = 0; i < node.preclocks.count; i++) {
 						var preclock = node.preclocks.clocks[i];
-						if (rclock === sclock) logNodePreClock(preclock, RunningNode);
+						if (rclock === sclock)
+							logNodePreClock(preclock, RunningNode);
 						else logClockPreClock(preclock, rclock, RunningNode);
 					}
 				}
@@ -220,7 +227,10 @@ S.data = function data<T>(value: T): (value?: T) => T {
 					// value has already been set once, check for conflicts
 					if (value !== node.pending) {
 						throw new Error(
-							'conflicting changes: ' + value + ' !== ' + node.pending
+							'conflicting changes: ' +
+								value +
+								' !== ' +
+								node.pending
 						);
 					}
 				} else {
@@ -243,7 +253,8 @@ S.data = function data<T>(value: T): (value?: T) => T {
 		} else {
 			if (RunningNode !== null) {
 				logDataRead(node, RunningNode);
-				if (sclock.parent === rclock) logNodePreClock(sclock, RunningNode);
+				if (sclock.parent === rclock)
+					logNodePreClock(sclock, RunningNode);
 				else if (sclock !== rclock)
 					logClockPreClock(sclock, rclock, RunningNode);
 			}
@@ -268,7 +279,10 @@ S.value = function value<T>(
 				var time = clock.time();
 				if (age === time)
 					throw new Error(
-						'conflicting values: ' + update + ' is not the same as ' + current
+						'conflicting values: ' +
+							update +
+							' is not the same as ' +
+							current
 					);
 				age = time;
 				current = update!;
@@ -319,7 +333,9 @@ S.cleanup = function cleanup(fn: (final: boolean) => void): void {
 		if (Owner.cleanups === null) Owner.cleanups = [fn];
 		else Owner.cleanups.push(fn);
 	} else {
-		console.warn('cleanups created without a root or parent will never be run');
+		console.warn(
+			'cleanups created without a root or parent will never be run'
+		);
 	}
 };
 
@@ -475,7 +491,11 @@ var RootClock = new Clock(null),
 function logRead(from: Log, to: ComputationNode) {
 	var fromslot: number,
 		toslot =
-			to.source1 === null ? -1 : to.sources === null ? 0 : to.sources.length;
+			to.source1 === null
+				? -1
+				: to.sources === null
+					? 0
+					: to.sources.length;
 
 	if (from.node1 === null) {
 		from.node1 = to;

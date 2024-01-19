@@ -4,9 +4,9 @@ S.js is a small reactive programming library. It combines an automatic dependenc
 
 An S app consists of _data signals_ and _computations_:
 
-- _data signals_ are created with `S.data(<value>)`. They are small containers for a piece of data that may change.
+-   _data signals_ are created with `S.data(<value>)`. They are small containers for a piece of data that may change.
 
-- _computations_ are created with `S(() => <code>)`. They are kept up-to-date as data signals change.
+-   _computations_ are created with `S(() => <code>)`. They are kept up-to-date as data signals change.
 
 Both kinds of signals are represented as small functions: call a signal to read its current value, pass a data signal a new value to update it.
 
@@ -60,8 +60,8 @@ We've converted the plain code we started with into a small machine, able to det
 
 For longer examples see:
 
-- the [minimalist todos](https://github.com/adamhaile/surplus#example) application in the [Surplus](https://github.com/adamhaile/surplus) library
-- the [Surplus implementation of the "Realworld" demo](https://github.com/adamhaile/surplus-realworld)
+-   the [minimalist todos](https://github.com/adamhaile/surplus#example) application in the [Surplus](https://github.com/adamhaile/surplus) library
+-   the [Surplus implementation of the "Realworld" demo](https://github.com/adamhaile/surplus-realworld)
 
 ## API
 

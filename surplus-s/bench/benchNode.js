@@ -314,7 +314,8 @@ function createComputation2(s1, s2) {
 function createComputation4(s1, s2, s3, s4) {
 	S.effect(
 		() =>
-			(sideEffect += s1.current() + s2.current() + s3.current() + s4.current())
+			(sideEffect +=
+				s1.current() + s2.current() + s3.current() + s4.current())
 	);
 }
 

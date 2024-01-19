@@ -76,7 +76,9 @@ if (S.subclock) {
 						var d1 = S.data(''),
 							n1 = S(() => d1(c1.d1())),
 							n2 = S(
-								() => d1().length < 4 || d1(d1().substr(0, d1().length - 1))
+								() =>
+									d1().length < 4 ||
+									d1(d1().substr(0, d1().length - 1))
 							);
 						return { d1, n1, n2 };
 					}),
@@ -116,7 +118,9 @@ if (S.subclock) {
 							b = S(() => a().length % 3 === 0 || a(a() + 'i'));
 						return { a };
 					}),
-					c = S(() => sub.a().length % 5 === 0 || sub.a(sub.a() + 'o'));
+					c = S(
+						() => sub.a().length % 5 === 0 || sub.a(sub.a() + 'o')
+					);
 
 				expect(sub.a()).toBe('');
 				sub.a('g');

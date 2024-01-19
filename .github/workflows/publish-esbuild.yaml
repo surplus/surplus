@@ -1,8 +1,8 @@
-name: Publish @surplus/rt
+name: Publish @surplus/esbuild
 on:
   push:
     tags:
-      - 'rt/*'
+      - 'esbuild/*'
 
 jobs:
   publish:
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: './.github/actions/publish-npm'
         with:
-          package: rt
+          package: esbuild
           npm-token: ${{ secrets.NPM_TOKEN }}
           ref: ${{ github.ref }}
           build: false

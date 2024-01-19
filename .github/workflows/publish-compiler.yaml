@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "latest"
-          registry-url: "https://registry.npmjs.org"
+          node-version: 'latest'
+          registry-url: 'https://registry.npmjs.org'
       - uses: actions/checkout@v4
       - name: Check Cargo.toml version against tag
         # We check the version here since we publish both an
@@ -39,7 +39,7 @@ jobs:
             exit 1
           fi
         shell: bash
-        working-directory: compiler
+        working-directory: surplus-compiler
         env:
           GITHUB_REF: ${{ github.ref }}
       - uses: './.github/actions/publish-cratesio'

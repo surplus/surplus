@@ -37,7 +37,7 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
     - name: Check Cargo.toml version against tag
       run: |
         CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-${{ inputs.package }}") | .version')"
@@ -46,7 +46,7 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         GITHUB_REF: ${{ inputs.ref }}
     - name: Make sure tag is newer than latest version published on npm
@@ -56,17 +56,17 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         GITHUB_REF: ${{ inputs.ref }}
     - run: npm i
       shell: bash
     - run: npm run build
       if: inputs.build == 'true'
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       shell: bash
     - run: cargo publish
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         CARGO_REGISTRY_TOKEN: ${{ inputs.cratesio-token }}
       shell: bash

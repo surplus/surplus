@@ -41,7 +41,7 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
     - name: Check package.json version against tag
       run: |
         if [ "$(jq -r '.version' package.json)" != "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ]; then
@@ -49,7 +49,7 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         GITHUB_REF: ${{ inputs.ref }}
     - name: Make sure tag is newer than latest version published on npm
@@ -59,17 +59,17 @@ runs:
           exit 1
         fi
       shell: bash
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         GITHUB_REF: ${{ inputs.ref }}
     - run: npm i
       shell: bash
     - run: npm run build
       if: inputs.build == 'true'
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       shell: bash
     - run: npm publish --access public
-      working-directory: ${{ inputs.package }}
+      working-directory: surplus-${{ inputs.package }}
       env:
         NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
       shell: bash

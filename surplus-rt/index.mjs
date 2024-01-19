@@ -52,7 +52,10 @@ export default {
 					this.S(() => {
 						let value = v();
 
-						if (value?.forEach && (name === 'class' || name === 'className')) {
+						if (
+							value?.forEach &&
+							(name === 'class' || name === 'className')
+						) {
 							// Kind of a weird workaround to handle real arrays and Sarray
 							const classNames = [];
 							value.forEach(v => v && classNames.push(v));

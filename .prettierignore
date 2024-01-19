@@ -1,0 +1,4 @@
+surplus-compiler/target
+surplus-compiler/pkg
+surplus-s/dist
+tests/playwright-report
