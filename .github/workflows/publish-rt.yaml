@@ -28,3 +28,4 @@ jobs:
           npm-token: ${{ secrets.NPM_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.ref }}
+          build: false
