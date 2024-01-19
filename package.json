@@ -8,7 +8,7 @@
 		"build": "(cd surplus-compiler && npm run build) && (cd surplus-s && npm run build)",
 		"format": "prettier --write . && cd surplus-compiler && npm run format",
 		"bench": "cd surplus-s && npm run bench",
-		"prepare-ci": "cd tests && npm run install-playwright"
+		"prepare-ci": "cd tests && npm run prepare-ci"
 	},
 	"dependencies": {
 		"@surplus/compiler": "./surplus-compiler",

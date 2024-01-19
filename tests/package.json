@@ -5,7 +5,7 @@
 	"scripts": {
 		"test": "playwright test",
 		"report": "playwright show-report",
-		"install-playwright": "playwright install"
+		"prepare-ci": "playwright install-deps && playwright install"
 	},
 	"dependencies": {
 		"@surplus/compiler": "../surplus-compiler",
