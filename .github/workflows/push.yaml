@@ -1,8 +1,8 @@
-name: "Test"
+name: Lint & Test
 on: [push]
 
 jobs:
-  changes:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,3 +11,8 @@ jobs:
       - run: npm run build
       - run: npm run test
       - run: npm run bench
+  ready-for-publish:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - run: ':'

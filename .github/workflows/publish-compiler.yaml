@@ -1,3 +1,4 @@
+name: Publish @surplus/compiler
 on:
   push:
     tags:
@@ -11,7 +12,7 @@ jobs:
         id: wait-for-build
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: push
+          checkName: ready-for-publish
           ref: ${{ github.sha }}
   publish:
     needs: wait-for-ci
