@@ -1,19 +1,15 @@
-name: Publish to NPM
-description: Publishes a Surplus package to NPM
+name: Publish to Crates.io
+description: Publishes a Surplus package to Crates.io
 inputs:
   package:
-    description: 'The package name (also the working directory, which must match @surplus/<name>)'
+    description: 'The package name (also the working directory, which must match surplus-<name>)'
     required: true
-  npm-token:
-    description: 'The NPM token to use for publishing'
+  cratesio-token:
+    description: 'The Crates.io token to use for publishing'
     required: true
   ref:
     description: '${GITHUB_REF}'
     required: true
-  build:
-    description: 'Whether to build the package before publishing'
-    required: false
-    default: 'true'
 runs:
   using: composite
   steps:
@@ -34,18 +30,19 @@ runs:
       env:
         GITHUB_REF: ${{ inputs.ref }}
       shell: bash
-    - name: Check that specified package name matches package.json name
+    - name: Check that specified package name matches Cargo.toml name
       run: |
-        if [ "$(jq -r '.name' package.json)" != "@surplus/${{ inputs.package }}" ]; then
-          echo "Specified package name does not match package.json name"
+        if ! cargo metadata --format-version=1 --offline --frozen --no-deps | jq -e '.packages[] | select(.name == "surplus-${{ inputs.package }}")' >/dev/null ; then
+          echo "Specified package name does not match Cargo.toml name"
           exit 1
         fi
       shell: bash
       working-directory: ${{ inputs.package }}
-    - name: Check package.json version against tag
+    - name: Check Cargo.toml version against tag
       run: |
-        if [ "$(jq -r '.version' package.json)" != "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ]; then
-          echo "Tag version does not match package.json version"
+        CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-${{ inputs.package }}") | .version'"
+        if [ "${CARGO_TOML_VERSION}" != "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ]; then
+          echo "Tag version does not match Cargo.toml version"
           exit 1
         fi
       shell: bash
@@ -54,8 +51,8 @@ runs:
         GITHUB_REF: ${{ inputs.ref }}
     - name: Make sure tag is newer than latest version published on npm
       run: |
-        if ! npx -y semver --range ">$(npm view '@surplus/${{ inputs.package }}' version)" "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ; then
-          echo "Tag version is not newer than latest version published on npm; manual publish required"
+        if ! npx -y semver --range ">$(cargo search 'surplus-${{ inputs.package }}' --limit 1 | awk '{print $3}' | tr -d '()' | jq -r .)" "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ; then
+          echo "Tag version is not newer than latest version published on Crates.io; manual publish required"
           exit 1
         fi
       shell: bash
@@ -68,8 +65,9 @@ runs:
       if: inputs.build == 'true'
       working-directory: ${{ inputs.package }}
       shell: bash
-    - run: npm publish --access public
+    - run: cargo publish
       working-directory: ${{ inputs.package }}
       env:
-        NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+        CARGO_REGISTRY_TOKEN: ${{ inputs.cratesio-token }}
       shell: bash
+

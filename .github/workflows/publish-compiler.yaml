@@ -22,9 +22,33 @@ jobs:
           node-version: "latest"
           registry-url: "https://registry.npmjs.org"
       - uses: actions/checkout@v4
+      - name: Check Cargo.toml version against tag
+        # We check the version here since we publish both an
+        # npm and a crates.io package from the same directory.
+        # Thus, if we check npm and publish before we check the
+        # crates.io version, we could publish a version that is
+        # mismatched between npm and cargo.
+        #
+        # This is not very DRY since the cargo publish script also
+        # does this. If you have a good idea on how to do this cleanly,
+        # please submit a PR!
+        run: |
+          CARGO_TOML_VERSION="$(cargo metadata --format-version=1 --offline --frozen --no-deps | jq -re '.packages[] | select(.name == "surplus-compiler") | .version'"
+          if [ "${CARGO_TOML_VERSION}" != "${GITHUB_REF#refs/tags/compiler/}" ]; then
+            echo "Tag version does not match Cargo.toml version"
+            exit 1
+          fi
+        shell: bash
+        working-directory: compiler
+        env:
+          GITHUB_REF: ${{ github.ref }}
+      - uses: './.github/actions/publish-cratesio'
+        with:
+          package: compiler
+          cratesio-token: ${{ secrets.CRATESIO_TOKEN }}
+          ref: ${{ github.ref }}
       - uses: './.github/actions/publish-npm'
         with:
           package: compiler
           npm-token: ${{ secrets.NPM_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.ref }}
