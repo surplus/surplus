@@ -19,8 +19,8 @@
 	"scripts": {
 		"build": "tsc && rollup dist/es/S.js -f \"umd\" -n \"S\" -o dist/S.js && rollup dist/es/withsubclocks.js -f \"umd\" -n \"S\" -o dist/withsubclocks.js",
 		"prepublish": "npm run build",
-		"test": "jasmine",
-		"bench": "node --allow-natives-syntax bench/bench.js",
+		"test": "npm run build && jasmine",
+		"bench": "npm run build && node --allow-natives-syntax bench/bench.js",
 		"lint": "prettier --no-editorconfig --check . ",
 		"format": "prettier --no-editorconfig --write ."
 	},
