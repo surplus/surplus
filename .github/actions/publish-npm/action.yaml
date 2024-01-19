@@ -54,7 +54,7 @@ runs:
         GITHUB_REF: ${{ inputs.ref }}
     - name: Make sure tag is newer than latest version published on npm
       run: |
-        if ! npx -y semver --range ">(npm view '@surplus/${{ inputs.package }}'' version)" "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ; then
+        if ! npx -y semver --range ">(npm view '@surplus/${{ inputs.package }}' version)" "${GITHUB_REF#refs/tags/${{ inputs.package }}/}" ; then
           echo "Tag version is not newer than latest version published on npm; manual publish required"
           exit 1
         fi
