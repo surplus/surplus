@@ -16,6 +16,11 @@ jobs:
           ref: ${{ github.sha }}
       - run: exit 1
         if: steps.wait-for-build.outputs.conclusion != 'success'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+          registry-url: "https://registry.npmjs.org"
       - uses: actions/checkout@v4
       - uses: './.github/actions/publish-npm'
         with:
