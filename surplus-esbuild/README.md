@@ -4,8 +4,8 @@
 Javascript framework.
 
 > **NOTE:** This plugin strips typescript types from the output.
-> If this is affecting you negatively, please open an issue
-> with the [compiler](https://github.com/surplus/compiler/issues).
+> If this is affecting you negatively, please
+> [open an issue](https://github.com/surplus/surplus/issues).
 
 ## Usage
 
