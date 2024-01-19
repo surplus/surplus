@@ -16,7 +16,7 @@ jobs:
   publish:
     needs: wait-for-ci
     runs-on: ubuntu-latest
-    if: steps.wait-for-ci.outputs.conclusion == 'success'
+    if: needs.wait-for-ci.outputs.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
       - uses: './.github/actions/publish-npm'
