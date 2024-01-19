@@ -2,7 +2,7 @@ name: Publish to NPM
 description: Publishes a Surplus package to NPM
 inputs:
   working-directory:
-    description: 'The package\'s working directory'
+    description: 'The package working directory'
     required: true
   npm-token:
     description: 'The NPM token to use for publishing'
