@@ -25,7 +25,7 @@ The compiler is usable via a WASM module.
 > will remain synchronized.
 
 ```javascript
-import compileSurplus from "@surplus/compiler";
+import compileSurplus from '@surplus/compiler';
 
 console.log(
 	compileSurplus(
@@ -33,10 +33,10 @@ console.log(
 
 		/* Optional arguments (defaults shown) */
 		{
-			global: "$$S",
-			emitRuntimeImport: true,
-		},
-	),
+			global: '$$S',
+			emitRuntimeImport: true
+		}
+	)
 );
 ```
 

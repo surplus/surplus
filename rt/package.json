@@ -9,6 +9,11 @@
 	"main": "index.mjs",
 	"browser": "index.mjs",
 	"type": "module",
+	"files": [
+		"index.mjs",
+		"LICENSE",
+		"README.md"
+	],
 	"keywords": [
 		"surplus",
 		"framework",

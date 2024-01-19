@@ -1,0 +1,17 @@
+{
+	"name": "@surplus/root",
+	"publish": false,
+	"version": "0.0.0",
+	"scripts": {
+		"test": "(cd compiler && npm test) && (cd s && npm test)",
+		"lint": "(cd compiler && npm run lint) && (cd rt && npm run lint) && (cd s && npm run lint)",
+		"build": "(cd compiler && npm run build) && (cd s && npm run build)",
+		"format": "(cd compiler && npm run format) && (cd rt && npm run format) && (cd s && npm run format)",
+		"bench": "cd s && npm run bench"
+	},
+	"dependencies": {
+		"@surplus/compiler": "./compiler",
+		"@surplus/rt": "./rt",
+		"@surplus/s": "./s"
+	}
+}

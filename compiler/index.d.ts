@@ -5,7 +5,7 @@ interface CompileSurplusOptions {
 
 declare function compileSurplus(
 	source: string,
-	options?: CompileSurplusOptions,
+	options?: CompileSurplusOptions
 ): string;
 
 export = compileSurplus;

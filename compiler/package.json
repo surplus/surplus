@@ -18,7 +18,10 @@
 	],
 	"scripts": {
 		"build": "./build-wasm.sh",
-		"prepublish": "./build-wasm.sh"
+		"prepublish": "./build-wasm.sh",
+		"test": "cargo test --all-targets",
+		"lint": "prettier --check . && cargo clippy --all-targets --all-features -- -D clippy::all",
+		"format": "prettier --write . && cargo fmt --all"
 	},
 	"keywords": [
 		"wasm",
@@ -29,7 +32,8 @@
 		"reactive"
 	],
 	"devDependencies": {
-		"wasm-pack": "0.12.1"
+		"wasm-pack": "0.12.1",
+		"prettier": "3.2.4"
 	},
 	"engines": {
 		"node": ">=14.0.0"

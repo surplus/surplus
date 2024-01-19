@@ -11,9 +11,9 @@
 		"dist"
 	],
 	"devDependencies": {
-		"jasmine": "^3.4.0",
-		"rollup": "^1.16.2",
-		"typescript": "^3.5.2",
+		"jasmine": "3.4.0",
+		"rollup": "1.16.2",
+		"typescript": "5.3.3",
 		"prettier": "3.2.4"
 	},
 	"scripts": {
