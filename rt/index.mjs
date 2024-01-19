@@ -1,4 +1,4 @@
-import S from "@surplus/s";
+import S from '@surplus/s';
 
 export default {
 	S,
@@ -7,14 +7,14 @@ export default {
 		return node;
 	},
 	ex(expr) {
-		const node = document.createTextNode("");
-		this.S(() => (node.textContent = expr?.()?.toString() ?? ""));
+		const node = document.createTextNode('');
+		this.S(() => (node.textContent = expr?.()?.toString() ?? ''));
 		return node;
 	},
 	_ch(tag, children) {
 		if (!children) return;
-		else if (typeof children === "function") this._ch(tag, children());
-		else if (children.forEach) children.forEach((ch) => this._ch(tag, ch));
+		else if (typeof children === 'function') this._ch(tag, children());
+		else if (children.forEach) children.forEach(ch => this._ch(tag, ch));
 		else {
 			tag.appendChild(children);
 			S.cleanup(() => tag.removeChild(children));
@@ -27,13 +27,13 @@ export default {
 			this._ch(tag, children);
 
 			for (const [k, v] of Object.entries(rest)) {
-				let [ns, name] = k.split(":", 2);
+				let [ns, name] = k.split(':', 2);
 				if (!name) {
 					name = ns;
 					ns = null;
 				}
 
-				if (ns === "on") {
+				if (ns === 'on') {
 					this.S(() => {
 						tag.addEventListener(name, v());
 					});
@@ -41,7 +41,7 @@ export default {
 					this.S(() => {
 						tag.setAttributeNS(ns, name, v());
 					});
-				} else if (name === "style") {
+				} else if (name === 'style') {
 					this.S(() => {
 						const styles = v();
 						for (const [k, v] of Object.entries(styles)) {
@@ -52,14 +52,11 @@ export default {
 					this.S(() => {
 						let value = v();
 
-						if (
-							value?.forEach &&
-							(name === "class" || name === "className")
-						) {
+						if (value?.forEach && (name === 'class' || name === 'className')) {
 							// Kind of a weird workaround to handle real arrays and Sarray
 							const classNames = [];
-							value.forEach((v) => v && classNames.push(v));
-							value = classNames.join(" ");
+							value.forEach(v => v && classNames.push(v));
+							value = classNames.join(' ');
 						}
 
 						tag.setAttribute(name, value);
@@ -67,7 +64,7 @@ export default {
 				}
 			}
 
-			fns?.()?.forEach((fn) => fn?.call(tag, tag));
+			fns?.()?.forEach(fn => fn?.call(tag, tag));
 
 			return tag;
 		})();
@@ -82,5 +79,5 @@ export default {
 	},
 	ct(tagFn) {
 		return this.S(() => tagFn())();
-	},
+	}
 };

@@ -1,0 +1,64 @@
+name: "Test"
+on: [push]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      s: ${{ steps.filter.outputs.s }}
+      rt: ${{ steps.filter.outputs.rt }}
+      compiler: ${{ steps.filter.outputs.compiler }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            s:
+              - 's/**'
+            rt:
+              - 'rt/**''
+            compiler:
+              - 'compiler/**'
+
+  s:
+    name: '@surplus/s'
+    if: ${{ needs.changes.outputs.s == 'true' }}
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i
+        working-directory: s
+      - run: npm run lint
+        working-directory: s
+      - run: npm run test
+        working-directory: s
+      - run: npm run bench
+        working-directory: s
+
+  rt:
+    name: '@surplus/rt'
+    if: ${{ needs.changes.outputs.rt == 'true' }}
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i
+        working-directory: rt
+      - run: npm run lint
+        working-directory: rt
+
+  compiler:
+    name: '@surplus/compiler'
+    if: ${{ needs.changes.outputs.compiler == 'true' }}
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --all -- --check
+        working-directory: compiler
+      - run: cargo clippy --all-targets --all-features -- -D clippy::all
+        working-directory: compiler
+      - run: cargo test --all-targets --all-features
+        working-directory: compiler

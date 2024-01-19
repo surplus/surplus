@@ -20,5 +20,12 @@
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"prettier": "3.2.4"
+	},
+	"scripts": {
+		"lint": "prettier --no-editorconfig --check . ",
+		"format": "prettier --no-editorconfig --write ."
 	}
 }
